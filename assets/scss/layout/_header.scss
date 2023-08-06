@@ -73,17 +73,4 @@
             }
         }
     }
-
-    // header mini
-    &-mini {
-        min-height: 24rem;
-        height: 24rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 1rem;
-        background: lighten($primary, 20%);
-    }
 }
