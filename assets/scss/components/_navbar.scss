@@ -7,21 +7,21 @@
     @include flex;
     align-items: center;    
     @include transition(all,.3s);
-    font-family: 'Baloo Paaji', cursive;
 
-    .logo { 
+    .logo {
         font-size: calc(20px + (30 - 20) * ((100vw - 300px) / (1300 - 300)));
         text-decoration: none;
-        color: $white;;
+        color: $white;
     }
 
     .container {
         flex-grow: 1;       
-        min-height: 100px;
+        min-height: 65px;
         @include flex;
         align-items: center;
         @include transition(all,.3s);
-    }   
+    }
+
     .hamburger {
         margin-left: 20px;
         padding-top: 5px;
@@ -30,7 +30,7 @@
             &,
             &::before,
             &::after {
-                background: $white;
+                background: $primary;
             }
         }
 
@@ -48,7 +48,7 @@
             margin: 0 10px;
 
             .link {
-                color: $white;
+                color: $primary;
                 font-weight: 500;
                 text-decoration: none;              
 
@@ -69,12 +69,13 @@
         .logo {
             color: $primary;
         }
+
         .container {
             min-height: 65px;
         }       
 
         .nav .item .link {
-            color: $gray-600;
+            color: $primary;
         }
 
 
@@ -82,7 +83,7 @@
             &,
             &::before,
             &::after {
-                    background: $gray-600;
+                    background: $primary;
             }
         }
     }
@@ -113,15 +114,14 @@
                     visibility: visible;
                 }                   
             }
-
         }
-            
     }
 
     @include media-breakpoint-down(md) {
         .hamburger {
             margin-left: auto;
         }
+
         .nav {
             position: absolute;
             top: calc(100% + 1px);
@@ -150,7 +150,6 @@
                 display: block;
                 color: $gray-600;
             }
-
         }
     }
 }

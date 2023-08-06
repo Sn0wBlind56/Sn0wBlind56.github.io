@@ -1,46 +1,33 @@
 // about section
-.about {
-    @include flex;
-    align-items: center;
-    text-align: left;
+// .about {
+//     text-align: justify;
+// }
 
-    &-img-holder {
-        min-width: 400px;
-        max-width: 400px;
-        margin-right: 20px;
+// @include media-breakpoint-down(sm) {
+//     .about {
+//         flex-direction: column;
+//         text-align: center;
 
-        .about-img {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-    }
-
-    &-caption {
-        flex-grow: 1;
-    }
-}
-@include media-breakpoint-down(sm) {
-    .about {
-
-        flex-direction: column;
-        text-align: center;
-
-        &-img-holder {
-            max-width: 220px;
-            min-width: 100%;
-            width: 100%;
-            margin: auto;
-            margin-bottom: 20px;
-        }
-    }
-}
+//         &-img-holder {
+//             max-width: 220px;
+//             min-width: 100%;
+//             width: 100%;
+//             margin: auto;
+//             margin-bottom: 20px;
+//         }
+//     }
+// }
 
 /* sections */
 .section {
-    padding: 70px 10px;
+    //padding: 4rem 1rem;
+    max-width: 64rem;
+    margin: 2rem auto 0 auto;
+    padding-top: 4rem;
 
     .section-title {
-        font-size: calc(20px + (35 - 20) * ((100vw - 300px) / (1300 - 300)));   
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
     }
 
     .section-subtitle {
@@ -49,6 +36,10 @@
         opacity: .6;
     }
 
+    p {
+        //font-size: 1.2rem;
+        text-align: justify;
+    }
 
     &-sm {
         padding: 40px 0 !important;
@@ -61,4 +52,85 @@
     &-lg {
         padding: 100px 0 !important;
     } 
+}
+
+.items-row {
+    margin-top: 2rem;
+
+    .item-wrapper {
+        margin-bottom: 2rem;
+        text-align: center;
+
+        .item-icon {
+            width: 8rem;
+            height: 8rem;
+            margin-bottom: 1rem;
+            opacity: 0.75;
+
+            &-padding {
+                padding: 1rem;
+            }
+    
+            &-padding-large {
+                padding: 1.5rem;
+            }
+        }
+
+        .item-name {
+            // TODO - Set this font-weight on every paragraph by default ?
+            font-weight: normal;
+            text-align: center;
+        }
+    }
+}
+
+.service-wrapper {
+    margin-bottom: 2rem;
+}
+
+.skills-row {
+    margin-top: 2rem;
+}
+
+.skill-wrapper {
+    margin-bottom: 2rem;
+    text-align: center;
+
+    .skill-icon {
+        /* max-width: 8rem;
+        max-height: 8rem; */
+        width: 8rem;
+        height: 8rem;
+        margin-bottom: 1rem;
+        // https://codepen.io/sosuke/pen/Pjoqqp
+        //filter: invert(25%) sepia(63%) saturate(1498%) hue-rotate(193deg) brightness(92%) contrast(93%);
+        //filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(358deg) brightness(99%) contrast(102%);
+        opacity: 0.75;
+
+        &-padding {
+            padding: 1rem;
+        }
+
+        &-padding-large {
+            padding: 1.5rem;
+        }
+    }
+
+    .skill-name {
+        // TODO - Set this font-weight on every paragraph by default ?
+        font-weight: normal;
+        text-align: center;
+    }
+}
+
+.project-wrapper {
+    margin-bottom: 4rem;
+
+    .project-image {
+        max-width: 100%;
+    }
+
+    .project-description {
+        text-align: justify;
+    }
 }

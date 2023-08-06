@@ -105,16 +105,20 @@ h4,
 h5,
 h6 {
     font-weight: 500;
-    font-family: 'Baloo Paaji', cursive;
-    color: $indigo;
+    font-family: $font-family-base;
+    color: $primary;
 }
+
 .my-font {
     font-family: 'Baloo Paaji', cursive;
 }
-p {
-    font-size: calc(13px + (15 - 13) * ((100vw - 300px) / (1300 - 300)));
-    font-weight: 100;
-    opacity: 1;
+
+p, li {
+    font-family: $font-family-base;
+    font-size: 1.1rem;
+    // TODO - Give every <p> tag font-weight 400 (normal) by default ?
+    //font-weight: 100;
+    //opacity: 1;
     color: #111;
     letter-spacing: .6px;
 } 
