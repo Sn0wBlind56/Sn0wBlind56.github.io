@@ -9790,8 +9790,7 @@ pre .code {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 32rem;
-  margin-top: 4rem;
+  margin-top: 6rem;
   margin-bottom: 8rem;
 }
 .header-title {
@@ -9808,7 +9807,6 @@ pre .code {
   font-style: italic;
 }
 .header .header-content {
-  margin: 20px 16rem 0 16rem;
   max-width: 96rem;
   flex-grow: 1;
   display: flex;
@@ -9816,19 +9814,48 @@ pre .code {
 }
 .header .header-content .me {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
+}
+@media (min-width: 48rem) {
+  .header .header-content .me {
+    flex-direction: row;
+  }
 }
 .header .header-content .me .me-text {
   flex: 1;
+  margin: 0 2rem;
   display: flex;
   flex-direction: column;
 }
+@media (min-width: 48rem) {
+  .header .header-content .me .me-text {
+    flex: 2;
+  }
+}
 .header .header-content .me .me-text .my-work-button {
-  align-self: start;
+  align-self: center;
   margin-top: 2rem;
   padding: 0.5rem 1rem;
   border-radius: 24rem;
+}
+@media (min-width: 48rem) {
+  .header .header-content .me .me-text .my-work-button {
+    margin-top: 2rem;
+    align-self: start;
+  }
+}
+.header .header-content .me .me-photo {
+  flex: 1;
+  margin-top: 4rem;
+}
+@media (min-width: 48rem) {
+  .header .header-content .me .me-photo {
+    margin-top: 0;
+  }
+}
+.header .header-content .me .me-photo .about-img {
+  max-width: 100%;
 }
 .header-mini {
   min-height: 24rem;
@@ -9842,14 +9869,6 @@ pre .code {
   background: #4785dc;
 }
 
-@media (max-width: 991.98px) {
-  .header {
-    background-size: cover;
-  }
-  .header-content {
-    padding-left: 20% !important;
-  }
-}
 .section {
   max-width: 64rem;
   margin: 2rem auto 0 auto;

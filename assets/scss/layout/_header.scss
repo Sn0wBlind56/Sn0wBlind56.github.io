@@ -2,8 +2,7 @@
     @include flex;
     align-items: center;  
     justify-content: center;
-    min-height: 32rem;
-    margin-top: 4rem;
+    margin-top: 6rem;
     margin-bottom: 8rem;
 
     &-title {
@@ -22,8 +21,7 @@
         font-style: italic;
     }
 
-    .header-content {
-        margin: 20px 16rem 0 16rem;
+    .header-content {    
         max-width: 96rem;
         flex-grow: 1;
         display: flex;
@@ -31,19 +29,46 @@
 
         .me {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
+
+            @media (min-width: $breakpoint-medium) {
+                flex-direction: row;
+            }
 
             .me-text {
                 flex: 1;
+                margin: 0 2rem;
                 display: flex;
                 flex-direction: column;
 
+                @media (min-width: $breakpoint-medium) {
+                    flex: 2;
+                }
+
                 .my-work-button {
-                    align-self: start;
+                    align-self: center;
                     margin-top: 2rem;
                     padding: 0.5rem 1rem;
                     border-radius: 24rem;
+
+                    @media (min-width: $breakpoint-medium) {
+                        margin-top: 2rem;
+                        align-self: start;
+                    }
+                }
+            }
+
+            .me-photo {
+                flex: 1;
+                margin-top: 4rem;
+
+                @media (min-width: $breakpoint-medium) {
+                    margin-top: 0;
+                }
+
+                .about-img {
+                    max-width: 100%;
                 }
             }
         }
@@ -62,14 +87,3 @@
         background: lighten($primary, 20%);
     }
 }
-
-@include media-breakpoint-down(md) {
-    .header {
-        background-size: cover;
-    }
-
-    .header-content {
-        padding-left: calc(100% / 5) !important;
-    }
-}
-
