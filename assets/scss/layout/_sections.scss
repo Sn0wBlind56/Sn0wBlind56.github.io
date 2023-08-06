@@ -1,26 +1,4 @@
-// about section
-// .about {
-//     text-align: justify;
-// }
-
-// @include media-breakpoint-down(sm) {
-//     .about {
-//         flex-direction: column;
-//         text-align: center;
-
-//         &-img-holder {
-//             max-width: 220px;
-//             min-width: 100%;
-//             width: 100%;
-//             margin: auto;
-//             margin-bottom: 20px;
-//         }
-//     }
-// }
-
-/* sections */
 .section {
-    //padding: 4rem 1rem;
     max-width: 64rem;
     margin: 2rem auto 0 auto;
     padding-top: 4rem;
@@ -37,7 +15,6 @@
     }
 
     p {
-        //font-size: 1.2rem;
         text-align: justify;
     }
 
@@ -77,8 +54,6 @@
         }
 
         .item-name {
-            // TODO - Set this font-weight on every paragraph by default ?
-            font-weight: normal;
             text-align: center;
         }
     }
@@ -97,14 +72,9 @@
     text-align: center;
 
     .skill-icon {
-        /* max-width: 8rem;
-        max-height: 8rem; */
         width: 8rem;
         height: 8rem;
         margin-bottom: 1rem;
-        // https://codepen.io/sosuke/pen/Pjoqqp
-        //filter: invert(25%) sepia(63%) saturate(1498%) hue-rotate(193deg) brightness(92%) contrast(93%);
-        //filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(358deg) brightness(99%) contrast(102%);
         opacity: 0.75;
 
         &-padding {
@@ -117,8 +87,6 @@
     }
 
     .skill-name {
-        // TODO - Set this font-weight on every paragraph by default ?
-        font-weight: normal;
         text-align: center;
     }
 }

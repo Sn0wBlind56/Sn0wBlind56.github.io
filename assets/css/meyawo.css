@@ -9043,7 +9043,6 @@ h6 {
 p, li {
   font-family: "Open Sans", sans-serif;
   font-size: 1.1rem;
-  color: #111;
   letter-spacing: 0.6px;
 }
 
@@ -9851,7 +9850,6 @@ pre .code {
     padding-left: 20% !important;
   }
 }
-/* sections */
 .section {
   max-width: 64rem;
   margin: 2rem auto 0 auto;
@@ -9899,7 +9897,6 @@ pre .code {
   padding: 1.5rem;
 }
 .items-row .item-wrapper .item-name {
-  font-weight: normal;
   text-align: center;
 }
 
@@ -9916,8 +9913,6 @@ pre .code {
   text-align: center;
 }
 .skill-wrapper .skill-icon {
-  /* max-width: 8rem;
-  max-height: 8rem; */
   width: 8rem;
   height: 8rem;
   margin-bottom: 1rem;
@@ -9930,7 +9925,6 @@ pre .code {
   padding: 1.5rem;
 }
 .skill-wrapper .skill-name {
-  font-weight: normal;
   text-align: center;
 }
 
