@@ -2,8 +2,12 @@
     @include flex;
     align-items: center;  
     justify-content: center;
-    margin-top: 6rem;
-    margin-bottom: 8rem;
+    max-width: $max-page-width;
+    margin: 6rem auto 6rem auto;
+
+    @media (min-width: $breakpoint-medium) {
+        margin-bottom: 8rem;
+    }
 
     &-title {
         font-size: 3rem;
