@@ -9042,7 +9042,6 @@ h6 {
 
 p, li {
   font-family: "Open Sans", sans-serif;
-  font-size: 1.1rem;
   letter-spacing: 0.6px;
 }
 
@@ -9790,8 +9789,13 @@ pre .code {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 6rem;
-  margin-bottom: 8rem;
+  max-width: 64rem;
+  margin: 6rem auto 6rem auto;
+}
+@media (min-width: 48rem) {
+  .header {
+    margin-bottom: 8rem;
+  }
 }
 .header-title {
   font-size: 3rem;
@@ -9861,7 +9865,7 @@ pre .code {
 .section {
   max-width: 64rem;
   margin: 2rem auto 0 auto;
-  padding-top: 4rem;
+  padding: 4rem 1.5rem 0 1.5rem;
 }
 .section .section-title {
   font-size: 2.5rem;
