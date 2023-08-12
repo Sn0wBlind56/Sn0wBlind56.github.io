@@ -9790,7 +9790,8 @@ pre .code {
   align-items: center;
   justify-content: center;
   max-width: 64rem;
-  margin: 6rem auto 6rem auto;
+  margin: 0 auto 6rem auto;
+  padding-top: 6rem;
 }
 @media (min-width: 48rem) {
   .header {
@@ -9851,15 +9852,26 @@ pre .code {
 }
 .header .header-content .me .me-photo {
   flex: 1;
+  padding: 0 2rem;
   margin-top: 4rem;
 }
 @media (min-width: 48rem) {
   .header .header-content .me .me-photo {
+    padding: 0;
     margin-top: 0;
   }
 }
 .header .header-content .me .me-photo .about-img {
   max-width: 100%;
+  border-radius: 50%;
+  border-color: #1e549f;
+  border-width: 4px;
+  border-style: solid;
+}
+@media (min-width: 48rem) {
+  .header .header-content .me .me-photo .about-img {
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+  }
 }
 
 .section {

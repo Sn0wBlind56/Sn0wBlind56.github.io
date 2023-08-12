@@ -3,7 +3,9 @@
     align-items: center;  
     justify-content: center;
     max-width: $max-page-width;
-    margin: 6rem auto 6rem auto;
+    // Use top padding instead of top margin for display purposes when clicking "Home"
+    margin: 0 auto 6rem auto;
+    padding-top: 6rem;
 
     @media (min-width: $breakpoint-medium) {
         margin-bottom: 8rem;
@@ -65,14 +67,24 @@
 
             .me-photo {
                 flex: 1;
+                padding: 0 2rem;
                 margin-top: 4rem;
 
                 @media (min-width: $breakpoint-medium) {
+                    padding: 0;
                     margin-top: 0;
                 }
 
                 .about-img {
                     max-width: 100%;
+                    border-radius: 50%;
+                    border-color: $primary;
+                    border-width: 4px;
+                    border-style: solid;
+
+                    @media (min-width: $breakpoint-medium) {
+                        box-shadow: 0 0 16px rgba(0,0,0,.5);
+                    }
                 }
             }
         }
