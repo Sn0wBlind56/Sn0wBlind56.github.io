@@ -9921,23 +9921,57 @@ pre .code {
 }
 
 .skill-wrapper {
-  margin-bottom: 2rem;
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+@media (min-width: 576px) {
+  .skill-wrapper {
+    display: block;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
 }
 .skill-wrapper .skill-icon {
-  width: 8rem;
-  height: 8rem;
-  margin-bottom: 1rem;
+  width: 4rem;
+  height: 4rem;
   opacity: 0.75;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
 }
 .skill-wrapper .skill-icon-padding {
-  padding: 1rem;
+  padding: 0.75rem;
 }
 .skill-wrapper .skill-icon-padding-large {
-  padding: 1.5rem;
+  padding: 1rem;
+}
+@media (min-width: 576px) {
+  .skill-wrapper .skill-icon {
+    width: 8rem;
+    height: 8rem;
+    margin-bottom: 1rem;
+  }
+  .skill-wrapper .skill-icon-padding {
+    padding: 1rem;
+  }
+  .skill-wrapper .skill-icon-padding-large {
+    padding: 1.5rem;
+  }
 }
 .skill-wrapper .skill-name {
-  text-align: center;
+  margin-bottom: 0;
+  text-align: left;
+}
+@media (min-width: 576px) {
+  .skill-wrapper .skill-name {
+    text-align: center;
+  }
+  .skill-wrapper .skill-name-part {
+    display: block;
+  }
+  .skill-wrapper .skill-name-divider {
+    display: none;
+  }
 }
 
 .project-wrapper {

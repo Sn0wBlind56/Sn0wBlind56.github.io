@@ -68,26 +68,61 @@
 }
 
 .skill-wrapper {
-    margin-bottom: 2rem;
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    @media (min-width: map-get($grid-breakpoints, "sm")) {
+        display: block;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
 
     .skill-icon {
-        width: 8rem;
-        height: 8rem;
-        margin-bottom: 1rem;
+        width: 4rem;
+        height: 4rem;
         opacity: 0.75;
+        padding: 0.5rem;
+        margin-right: 0.5rem;
 
         &-padding {
-            padding: 1rem;
+            padding: 0.75rem;
         }
 
         &-padding-large {
-            padding: 1.5rem;
+            padding: 1rem;
+        }
+
+        @media (min-width: map-get($grid-breakpoints, "sm")) {
+            width: 8rem;
+            height: 8rem;
+            margin-bottom: 1rem;
+
+            &-padding {
+                padding: 1rem;
+            }
+
+            &-padding-large {
+                padding: 1.5rem;
+            }
         }
     }
 
     .skill-name {
-        text-align: center;
+        margin-bottom: 0;
+        text-align: left;
+
+        @media (min-width: map-get($grid-breakpoints, "sm")) {
+            text-align: center;
+
+            &-part {
+                display: block;
+            }
+
+            &-divider {
+                display: none;
+            }
+        }
     }
 }
 
