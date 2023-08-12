@@ -9996,4 +9996,56 @@ pre .code {
   text-align: justify;
 }
 
+.testimonials-wrapper {
+  align-items: flex-start;
+}
+
+.testimonial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 4rem;
+}
+@media (min-width: 992px) {
+  .testimonial {
+    align-items: flex-start;
+    flex-direction: row;
+    margin-bottom: 3rem;
+  }
+  .testimonial:nth-child(odd) {
+    padding-right: 2rem;
+  }
+  .testimonial:nth-child(even) {
+    padding-left: 2rem;
+  }
+}
+.testimonial .image-holder {
+  min-width: 4rem;
+  max-width: 4rem;
+  margin-bottom: 1rem;
+}
+@media (min-width: 992px) {
+  .testimonial .image-holder {
+    min-width: 6rem;
+    max-width: 6rem;
+    margin-right: 2rem;
+    margin-bottom: 0;
+  }
+}
+.testimonial .image-holder img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+}
+.testimonial .person-name {
+  color: #1e549f;
+  font-size: 1.25rem;
+  margin-bottom: 0;
+}
+.testimonial .person-title {
+  opacity: 0.8;
+  font-style: italic;
+  margin-bottom: 0;
+}
+
 /*# sourceMappingURL=meyawo.css.map */
