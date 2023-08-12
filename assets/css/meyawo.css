@@ -8946,6 +8946,13 @@ a.text-dark:hover, a.text-dark:focus {
   color: white;
 }
 
+body {
+  margin: 0 auto;
+  max-width: 64rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
 .infos {
   height: 100px;
   padding-bottom: 20px;
@@ -9782,15 +9789,10 @@ pre .code {
   }
 }
 .header {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
   display: flex;
   align-items: center;
   justify-content: center;
   max-width: 64rem;
-  margin: 0 auto 6rem auto;
   padding-top: 6rem;
 }
 @media (min-width: 48rem) {
@@ -9812,13 +9814,12 @@ pre .code {
   font-style: italic;
 }
 .header .header-content {
-  max-width: 96rem;
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
 .header .header-content .me {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   align-items: center;
 }
@@ -9827,33 +9828,53 @@ pre .code {
     flex-direction: row;
   }
 }
+@media (min-width: 48rem) {
+  .header .header-content .me .my-work-button {
+    margin-top: 1rem;
+    align-self: start;
+  }
+}
+.header .header-content .me .my-work-button a {
+  padding: 0.5rem 1rem;
+  border-radius: 24rem;
+}
+.header .header-content .me > .my-work-button {
+  display: block;
+  flex: 100%;
+  align-self: center;
+  margin-top: 4rem;
+}
+@media (min-width: 48rem) {
+  .header .header-content .me > .my-work-button {
+    display: none;
+  }
+}
+.header .header-content .me > .my-work-button a {
+  padding: 0.5rem 1rem;
+  border-radius: 24rem;
+}
 .header .header-content .me .me-text {
   flex: 1;
-  margin: 0 2rem;
   display: flex;
   flex-direction: column;
+  margin-right: 1rem;
+}
+.header .header-content .me .me-text .my-work-button {
+  display: none;
 }
 @media (min-width: 48rem) {
   .header .header-content .me .me-text {
     flex: 2;
   }
-}
-.header .header-content .me .me-text .my-work-button {
-  align-self: center;
-  margin-top: 2rem;
-  padding: 0.5rem 1rem;
-  border-radius: 24rem;
-}
-@media (min-width: 48rem) {
   .header .header-content .me .me-text .my-work-button {
-    margin-top: 2rem;
-    align-self: start;
+    display: block;
   }
 }
 .header .header-content .me .me-photo {
   flex: 1;
   padding: 0 2rem;
   margin-top: 4rem;
+  max-width: 24rem;
 }
 @media (min-width: 48rem) {
   .header .header-content .me .me-photo {
@@ -9875,9 +9896,7 @@ pre .code {
 }
 
 .section {
-  max-width: 64rem;
-  margin: 2rem auto 0 auto;
-  padding: 4rem 1.5rem 0 1.5rem;
+  padding-top: 6rem;
 }
 .section .section-title {
   font-size: 2.5rem;
@@ -10004,7 +10023,7 @@ pre .code {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 4rem;
+  margin-bottom: 5rem;
 }
 @media (min-width: 992px) {
   .testimonial {

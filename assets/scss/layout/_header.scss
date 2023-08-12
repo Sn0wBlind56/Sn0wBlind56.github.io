@@ -1,10 +1,11 @@
 .header {
-    @include flex;
-    align-items: center;  
+    display: flex;
+    align-items: center;
     justify-content: center;
     max-width: $max-page-width;
-    // Use top padding instead of top margin for display purposes when clicking "Home"
-    margin: 0 auto 6rem auto;
+    
+    // Use top padding to compensate for the navigation bar spacing and to ensure the
+    // element to which we navigate is completely visible.
     padding-top: 6rem;
 
     @media (min-width: $breakpoint-medium) {
@@ -28,13 +29,12 @@
     }
 
     .header-content {    
-        max-width: 96rem;
-        flex-grow: 1;
         display: flex;
         flex-direction: column;
 
         .me {
             display: flex;
+            flex-wrap: wrap;
             flex-direction: column;
             align-items: center;
 
@@ -42,25 +42,49 @@
                 flex-direction: row;
             }
 
+            .my-work-button {
+                @media (min-width: $breakpoint-medium) {
+                    margin-top: 1rem;
+                    align-self: start;
+                }
+
+                a {
+                    padding: 0.5rem 1rem;
+                    border-radius: 24rem;
+                }
+            }
+
+            & > .my-work-button {
+                display: block;
+                flex: 100%;
+                align-self: center;
+                margin-top: 4rem;
+
+                @media (min-width: $breakpoint-medium) {
+                    display: none;
+                }
+
+                a {
+                    padding: 0.5rem 1rem;
+                    border-radius: 24rem;
+                }
+            }
+
             .me-text {
                 flex: 1;
-                margin: 0 2rem;
                 display: flex;
                 flex-direction: column;
+                margin-right: 1rem;
+
+                .my-work-button {
+                    display: none;
+                }
 
                 @media (min-width: $breakpoint-medium) {
                     flex: 2;
-                }
 
-                .my-work-button {
-                    align-self: center;
-                    margin-top: 2rem;
-                    padding: 0.5rem 1rem;
-                    border-radius: 24rem;
-
-                    @media (min-width: $breakpoint-medium) {
-                        margin-top: 2rem;
-                        align-self: start;
+                    .my-work-button {
+                        display: block;
                     }
                 }
             }
@@ -69,6 +93,7 @@
                 flex: 1;
                 padding: 0 2rem;
                 margin-top: 4rem;
+                max-width: 24rem;
 
                 @media (min-width: $breakpoint-medium) {
                     padding: 0;
