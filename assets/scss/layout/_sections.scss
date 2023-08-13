@@ -134,6 +134,15 @@
     .project-description {
         text-align: justify;
     }
+
+    .project-link {
+        font-size: 1.25rem;
+        font-style: italic;
+
+        &:hover {
+            color: $primary;
+        }
+    }
 }
 
 .testimonials-wrapper {

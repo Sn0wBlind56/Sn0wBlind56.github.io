@@ -10014,6 +10014,13 @@ pre .code {
 .project-wrapper .project-description {
   text-align: justify;
 }
+.project-wrapper .project-link {
+  font-size: 1.25rem;
+  font-style: italic;
+}
+.project-wrapper .project-link:hover {
+  color: #1e549f;
+}
 
 .testimonials-wrapper {
   align-items: flex-start;
@@ -10065,6 +10072,16 @@ pre .code {
   opacity: 0.8;
   font-style: italic;
   margin-bottom: 0;
+}
+
+.main-project-image {
+  max-width: 100%;
+  margin-bottom: 2rem;
+}
+
+.project-image {
+  max-width: 100%;
+  padding: 1rem;
 }
 
 /*# sourceMappingURL=meyawo.css.map */
