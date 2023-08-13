@@ -36,3 +36,9 @@ $('#nav-toggle').click(function(){
     $(this).toggleClass('is-active')
     $('ul.nav').toggleClass('show');
 });
+
+// navbar toggle
+$('.nav .link').click(function(){
+    $('#nav-toggle').toggleClass('is-active')
+    $('ul.nav').toggleClass('show');
+});
