@@ -20,14 +20,18 @@ $(document).ready(function(){
             return;
         }
 
-        var hash = this.hash;
-        event.preventDefault();
+        var indexPage = window.location.pathname.indexOf("index.html");
 
-        $('html').animate({
-            scrollTop: $(hash).offset().top
-        }, 500, function(){
-            window.location.hash = hash;
-        });
+        if (indexPage && indexPage > 0) {
+            var hash = this.hash;
+            event.preventDefault();
+    
+            $('html').animate({
+                scrollTop: $(hash).offset().top
+            }, 500, function(){
+                window.location.hash = hash;
+            });
+        }
     });
 });
 
