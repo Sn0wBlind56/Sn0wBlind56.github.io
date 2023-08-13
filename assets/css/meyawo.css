@@ -10083,6 +10083,23 @@ pre .code {
   margin-top: 0.5rem;
 }
 
+.project-description {
+  margin-bottom: 4rem;
+}
+
+.project-info {
+  margin-bottom: 4rem;
+}
+.project-info .item {
+  margin-bottom: 2rem;
+}
+.project-info .item .title {
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
 .main-project-image {
   max-width: 100%;
   margin-bottom: 2rem;

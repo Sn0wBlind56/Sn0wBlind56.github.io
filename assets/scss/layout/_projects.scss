@@ -1,3 +1,22 @@
+.project-description {
+    margin-bottom: 4rem;
+}
+
+.project-info {
+    margin-bottom: 4rem;
+
+    .item {
+        margin-bottom: 2rem;
+
+        .title {
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+    }
+}
+
 .main-project-image {
     max-width: 100%;
     margin-bottom: 2rem;
