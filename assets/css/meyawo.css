@@ -10014,6 +10014,9 @@ pre .code {
 .project-wrapper .project-description {
   text-align: justify;
 }
+.project-wrapper .project-description a {
+  font-weight: bold;
+}
 .project-wrapper .project-link {
   font-size: 1.25rem;
   font-style: italic;
