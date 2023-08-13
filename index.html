@@ -474,6 +474,8 @@
                     <input id="firstName"
                            class="form-control"
                            type="text"
+                           name="firstName"
+                           required
                            placeholder="John">
                 </div>
                 <div class="form-group col-12 col-sm-6">
@@ -481,6 +483,8 @@
                     <input id="lastName"
                            class="form-control"
                            type="text"
+                           name="lastName"
+                           required
                            placeholder="Doe">
                 </div>
             </div>
@@ -489,6 +493,8 @@
                 <input id="email"
                        class="form-control"
                        type="email"
+                       name="email"
+                       required
                        aria-describedby="emailHelp"
                        placeholder="Please enter your email address here">
                 <small id="emailHelp" class="form-text text-muted">
@@ -497,7 +503,7 @@
             </div>
             <div class="form-group">
                 <label for="origin">How did you find me?</label>
-                <select class="form-control" id="origin">
+                <select class="form-control" id="origin" name="origin">
                     <option>LinkedIn</option>
                     <option>Word of mouth</option>
                     <option>Google</option>
@@ -509,6 +515,9 @@
                 <textarea
                     id="message"
                     class="form-control"
+                    name="message"
+                    required
+                    minlength="30"
                     placeholder="Please enter your message or inquiry here"
                     rows="4"
                 ></textarea>
