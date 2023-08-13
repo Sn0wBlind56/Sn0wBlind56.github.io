@@ -15,19 +15,19 @@
 // smooth scroll
 $(document).ready(function(){
     $(".nav .link").on('click', function(event) {
+        // Should have been set automatically through href by clicking the link
+        if (this.hash === "") {
+            return;
+        }
 
-        if (this.hash !== "") {
+        var hash = this.hash;
+        event.preventDefault();
 
-            event.preventDefault();
-
-            var hash = this.hash;
-
-            $('html, body').animate({
-                scrollTop: $(hash).offset().top
-            }, 700, function(){
-                window.location.hash = hash;
-            });
-        } 
+        $('html').animate({
+            scrollTop: $(hash).offset().top
+        }, 500, function(){
+            window.location.hash = hash;
+        });
     });
 });
 
