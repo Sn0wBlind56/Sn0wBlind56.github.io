@@ -9563,7 +9563,7 @@ pre .code {
     transform: translateY(-50px);
   }
   .custom-navbar .nav .item:nth-child(9) {
-    transition: all, 0.1s;
+    transition: all, 0.05s;
     transition-delay: 0s;
   }
 }
@@ -9574,7 +9574,7 @@ pre .code {
 }
 @media (min-width: 768px) {
   .custom-navbar .nav .item:nth-child(8) {
-    transition: all, 0.2s;
+    transition: all, 0.1s;
     transition-delay: 0.05s;
   }
 }
@@ -9585,7 +9585,7 @@ pre .code {
 }
 @media (min-width: 768px) {
   .custom-navbar .nav .item:nth-child(7) {
-    transition: all, 0.3s;
+    transition: all, 0.15s;
     transition-delay: 0.1s;
   }
 }
@@ -9596,7 +9596,7 @@ pre .code {
 }
 @media (min-width: 768px) {
   .custom-navbar .nav .item:nth-child(6) {
-    transition: all, 0.4s;
+    transition: all, 0.2s;
     transition-delay: 0.15s;
   }
 }
@@ -9607,7 +9607,7 @@ pre .code {
 }
 @media (min-width: 768px) {
   .custom-navbar .nav .item:nth-child(5) {
-    transition: all, 0.5s;
+    transition: all, 0.25s;
     transition-delay: 0.2s;
   }
 }
@@ -9618,7 +9618,7 @@ pre .code {
 }
 @media (min-width: 768px) {
   .custom-navbar .nav .item:nth-child(4) {
-    transition: all, 0.6s;
+    transition: all, 0.3s;
     transition-delay: 0.25s;
   }
 }
@@ -9629,7 +9629,7 @@ pre .code {
 }
 @media (min-width: 768px) {
   .custom-navbar .nav .item:nth-child(3) {
-    transition: all, 0.7s;
+    transition: all, 0.35s;
     transition-delay: 0.3s;
   }
 }
@@ -9640,7 +9640,7 @@ pre .code {
 }
 @media (min-width: 768px) {
   .custom-navbar .nav .item:nth-child(2) {
-    transition: all, 0.8s;
+    transition: all, 0.4s;
     transition-delay: 0.35s;
   }
 }
@@ -9651,7 +9651,7 @@ pre .code {
 }
 @media (min-width: 768px) {
   .custom-navbar .nav .item:nth-child(1) {
-    transition: all, 0.9s;
+    transition: all, 0.45s;
     transition-delay: 0.4s;
   }
 }
