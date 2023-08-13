@@ -8947,7 +8947,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 body {
-  margin: 0 auto;
+  margin: 0 auto 2rem auto;
   max-width: 64rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -10075,6 +10075,19 @@ pre .code {
   opacity: 0.8;
   font-style: italic;
   margin-bottom: 0;
+}
+
+.contact-form .submit-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 24rem;
+}
+
+.contact-form > .form-group {
+  margin-top: 1.5rem;
+}
+.contact-form > .form-group.email-address {
+  margin-top: 0.5rem;
 }
 
 .main-project-image {

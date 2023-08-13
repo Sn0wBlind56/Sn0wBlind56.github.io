@@ -204,3 +204,19 @@
         margin-bottom: 0;
     }
 }
+
+.contact-form {
+    .submit-button {
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 24rem;
+    }
+}
+
+.contact-form > .form-group {
+    margin-top: 1.5rem;
+
+    &.email-address {
+        margin-top: 0.5rem;
+    }
+}
