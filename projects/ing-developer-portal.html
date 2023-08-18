@@ -54,6 +54,67 @@
         eIDAS certificate.
     </p>
 
+    <div class="project-info">
+        <h2>Part 1 - Central Registry</h2>
+        <div class="item role">
+            <p class="title">Role</p>
+            <p class="value">Developer</p>
+        </div>
+        <div class="item problem-statement">
+            <p class="title">Problem Statement</p>
+            <p class="value">
+                Within ING, a lot of internal APIs are available for various purposes. However, there was no central
+                registry where developers could find an overview of all these APIs. As a result, multiple development
+                teams built systems that serve the same purpose. Authentication and authorization mechanisms were not
+                standardized either, leaving these choices up to the individual developers.
+            </p>
+            <p class="value">
+                The client wanted a central registry in which all internal APIs are visible to all developers within
+                the company. Besides providing an API overview, it should also be very clear to developers when a new
+                version is released and what the impact of this new version is. Moreover, both API producers and
+                consumers must be able to quickly see which systems are consuming which API endpoints, thereby showing
+                all active integrations.
+            </p>
+        </div>
+        <div class="item responsibilities">
+            <p class="title">Responsibilities</p>
+            <p class="value">
+                I was responsible for building and maintaining ING's own Developer Portal, which also serves as a
+                platform to manage integrations, authentication and authorization. The system issues certificates to
+                support mutual TLS connections between microservices, whereby owners of the providing API have full
+                control over which exact endpoints are made available for the consuming service.
+            </p>
+        </div>
+    </div>
+
+    <div class="project-info">
+        <h2>Part 2 - Third Party Providers and PSD2 Compliance</h2>
+        <div class="item role">
+            <p class="title">Role</p>
+            <p class="value">Lead Developer</p>
+        </div>
+        <div class="item problem-statement">
+            <p class="title">Problem Statement</p>
+            <p class="value">
+                European banks need to comply with the PSD2 directive, which states that Payment Services Providers
+                need to allow Third Parties to access their payment data. In order to make this possible, APIs exposing
+                payment and transaction information need to be versioned, well-documented and easy to consume without
+                manual actions. Typically, these third parties call an endpoint within ING with nothing more than an
+                eIDAS certificate.
+            </p>
+        </div>
+        <div class="item responsibilities">
+            <p class="title">Responsibilities</p>
+            <ul>
+                <li>Build a microservice that translates eIDAS certificates to permissions on API endpoints</li>
+                <li>Support external parties with eIDAS / OAuth 2.0 integration</li>
+                <li>Support documenting the eIDAS / OAuth 2.0 flow</li>
+                <li>Lead and coach a team of 5 developers</li>
+                <li>Assure the quality of delivered artifacts</li>
+            </ul>
+        </div>
+    </div>
+
     <img class="main-project-image"
          src="../assets/imgs/ing-developer-portal-2.png"
          alt="An image displaying ING's Developer Portal">
