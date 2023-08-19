@@ -10004,10 +10004,10 @@ pre .code {
 .project-wrapper .project-image {
   max-width: 100%;
 }
-.project-wrapper .project-description {
+.project-wrapper .project-summary {
   text-align: justify;
 }
-.project-wrapper .project-description a {
+.project-wrapper .project-summary a {
   font-weight: bold;
 }
 .project-wrapper .project-link {
@@ -10083,10 +10083,18 @@ pre .code {
   margin-top: 0.5rem;
 }
 
+.project-description {
+  margin-bottom: 4rem;
+}
+.project-description a {
+  font-weight: bold;
+}
+
 .project-info {
   margin-bottom: 4rem;
 }
 .project-info .item {
+  margin-top: 1rem;
   margin-bottom: 2rem;
 }
 .project-info .item .title {
@@ -10104,6 +10112,12 @@ pre .code {
 .project-image {
   max-width: 100%;
   padding: 1rem;
+}
+
+.external-link {
+  font-size: 1.25rem;
+  font-style: italic;
+  font-weight: 600;
 }
 
 /*# sourceMappingURL=meyawo.css.map */

@@ -1,7 +1,16 @@
+.project-description {
+    margin-bottom: 4rem;
+
+    a {
+        font-weight: bold;
+    }
+}
+
 .project-info {
     margin-bottom: 4rem;
 
     .item {
+        margin-top: 1rem;
         margin-bottom: 2rem;
 
         .title {
@@ -21,4 +30,10 @@
 .project-image {
     max-width: 100%;
     padding: 1rem;
+}
+
+.external-link {
+    font-size: 1.25rem;
+    font-style: italic;
+    font-weight: 600;
 }
