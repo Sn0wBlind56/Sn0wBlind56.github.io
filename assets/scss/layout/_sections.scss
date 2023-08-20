@@ -26,7 +26,11 @@
 
     &-lg {
         padding: 100px 0 !important;
-    } 
+    }
+
+    strong {
+        color: $gray-700;
+    }
 }
 
 .items-row {

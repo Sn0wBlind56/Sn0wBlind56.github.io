@@ -9919,6 +9919,9 @@ pre .code {
 .section-lg {
   padding: 100px 0 !important;
 }
+.section strong {
+  color: #495057;
+}
 
 .items-row {
   margin-top: 2rem;
