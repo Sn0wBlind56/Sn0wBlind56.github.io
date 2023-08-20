@@ -40,6 +40,7 @@
 
             @media (min-width: $breakpoint-medium) {
                 flex-direction: row;
+                align-items: flex-start;
             }
 
             .my-work-button {
@@ -70,13 +71,22 @@
                 }
             }
 
+            & > .company-logos {
+                display: flex;
+                flex-direction: column;
+
+                @media (min-width: $breakpoint-medium) {
+                    display: none;
+                }
+            }
+
             .me-text {
                 flex: 1;
                 display: flex;
                 flex-direction: column;
                 margin-right: 1rem;
 
-                .my-work-button {
+                .my-work-button, .company-logos {
                     display: none;
                 }
 
@@ -85,6 +95,11 @@
 
                     .my-work-button {
                         display: block;
+                    }
+
+                    .company-logos {
+                        display: flex;
+                        flex-direction: row;
                     }
                 }
             }
@@ -109,6 +124,22 @@
 
                     @media (min-width: $breakpoint-medium) {
                         box-shadow: 0 0 16px rgba(0,0,0,.5);
+                    }
+                }
+            }
+
+            .company-logos {
+                flex-wrap: wrap;
+                align-items: center;
+
+                & > img {
+                    opacity: 0.5;
+                    max-width: 10rem;
+                    margin-top: 2rem;
+                    filter: grayscale(100%);
+
+                    @media (min-width: $breakpoint-medium) {
+                        margin-right: 4rem;
                     }
                 }
             }
