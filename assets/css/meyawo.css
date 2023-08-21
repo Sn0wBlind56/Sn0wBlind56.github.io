@@ -9090,12 +9090,48 @@ pre .code {
   transition-delay: 0.075s;
 }
 
-.custom-navbar {
+.custom-navbar, .expanded-navbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
+}
+
+@media (min-width: 48rem) {
+  .custom-navbar {
+    display: none;
+  }
+}
+
+.expanded-navbar {
+  display: none;
+  left: auto;
+  right: 0;
+  background-color: white;
+}
+@media (min-width: 48rem) {
+  .expanded-navbar {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+.expanded-navbar .items {
+  height: 4rem;
+  width: 100%;
+  max-width: 64rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
+  list-style: none;
+}
+.expanded-navbar .items .item {
+  margin: auto 1rem;
+}
+
+.custom-navbar {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -9103,6 +9139,11 @@ pre .code {
   display: flex;
   align-items: center;
   transition: all, 0.3s;
+}
+@media (min-width: 48rem) {
+  .custom-navbar {
+    display: none;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .custom-navbar {

@@ -1,9 +1,50 @@
-.custom-navbar {    
+.custom-navbar, .expanded-navbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
+}
+
+.custom-navbar {
+    @media (min-width: $breakpoint-medium) {
+        display: none;
+    }
+}
+
+.expanded-navbar {
+    display: none;
+    left: auto;
+    right: 0;
+    background-color: white;
+
+    @media (min-width: $breakpoint-medium) {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .items {
+        height: 4rem;
+        width: 100%;
+        max-width: $max-page-width;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: flex-end;
+        list-style: none;
+
+        .item {
+            margin: auto 1rem;
+        }
+    }
+}
+
+.custom-navbar {
+    @media (min-width: $breakpoint-medium) {
+        display: none;
+    }
+
     @include flex;
     align-items: center;    
     @include transition(all,.3s);
