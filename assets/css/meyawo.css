@@ -9675,6 +9675,9 @@ pre .code {
   max-height: 100%;
   border-radius: 50%;
 }
+.testimonial .body {
+  width: 100%;
+}
 .testimonial .person-name {
   color: #1e549f;
   font-size: 1.25rem;
