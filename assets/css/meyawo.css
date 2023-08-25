@@ -9098,6 +9098,9 @@ pre .code {
   z-index: 1000;
 }
 
+.custom-navbar .container {
+  max-width: 100%;
+}
 @media (min-width: 48rem) {
   .custom-navbar {
     display: none;
