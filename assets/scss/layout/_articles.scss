@@ -1,0 +1,56 @@
+.article-subtitle {
+    margin-top: 4rem;
+
+    &:first-of-type {
+        margin-top: 2rem;
+    }
+}
+
+.github-repository {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: fit-content;
+    border: 2px solid $border-color;
+    margin: 2rem 0;
+
+    .image-container {
+        .image {
+            max-width: 6rem;
+            padding: 1rem;
+        }
+    }
+
+    .text-container {
+        margin: 1rem;
+        margin-left: 1rem;
+
+        & > * {
+            margin: 0;
+        }
+    }
+
+    .name {
+        color: $black;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .description {
+        font-style: italic;
+    }
+}
+
+.pre-inline {
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    background-color: $gray-100;
+    font-size: $code-font-size;
+    font-family: $font-family-monospace;
+}
+
+.image-container {
+    .image {
+        max-width: 100%;;
+    }
+}

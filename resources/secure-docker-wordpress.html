@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="How to deploy and run a WordPress-based website or blog in Docker with fully automated TLS support through Let's Encrypt.">
+    <meta name="theme-color" content="#1e549f">
+
+    <title>Deploying a Secure Website in Docker - Jelle Spoelders</title>
+
+    <link rel="stylesheet" href="../assets/css/meyawo.css">
+
+    <link rel="icon" type="image/x-icon" href="../assets/imgs/js.png">
+</head>
+<body>
+    <section class="section">
+        <h1>Deploying a Secure Website in Docker</h1>
+
+        <h2 class="article-subtitle">Introduction</h2>
+        <p>
+            This article will explain and show you how you can deploy and run a WordPress-based website or blog in
+            Docker with fully automated TLS certificate rotation through Let's Encrypt.
+            In this example, we'll be using Docker Compose to easily manage the different containers we need.
+            Because this setup requires you to configure some secrets such as passwords and private keys, it involves
+            a few initial manual steps.
+        </p>
+
+        <div class="github-repository">
+            <div class="image-container">
+                <a href="https://github.com/Sn0wBlind56/docker-blog-setup">
+                    <img class="image" src="../assets/imgs/github-mark.svg" alt="The GitHub logo">
+                </a>
+            </div>
+            <div class="text-container">
+                <h1 class="name">docker-blog-setup</h1>
+                <p class="description">Docker setup for a WordPress blog with automatic TLS certificate renewal</p>
+                <a href="https://github.com/Sn0wBlind56/docker-blog-setup">https://github.com/Sn0wBlind56/docker-blog-setup</a>
+            </div>
+        </div>
+
+        <h2 class="article-subtitle">Required Tools</h2>
+        <ul>
+            <li>Docker</li>
+            <li>Docker Compose</li>
+            <li>Bash (Linux) or Git Bash (Windows)</li>
+        </ul>
+
+        <h2 class="article-subtitle">Configuring the Secrets</h2>
+        <p>
+            On the machine you want to deploy the website, create the files listed below. Change the path to something
+            that makes sense on your target host. Each one of them should contain a single line with the desired secret.
+            These files will be mounted into the Docker containers as a way to securely pass the secret.
+        </p>
+        <p>You can easily generate a random password in (Git) Bash with the following command.</p>
+        <pre>cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 16 | sudo tee /etc/secrets/mysql/root_password > /dev/null</pre>
+        <table class="table table-responsive-md">
+            <thead>
+                <tr>
+                    <th>Path</th>
+                    <th>Description</th>
+                    <th>Example Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>/etc/secrets/mysql/root_password</td>
+                    <td>The root password for the MySQL database</td>
+                    <td>lWT4KK6V21xU1G82</td>
+                </tr>
+                <tr>
+                    <td>/etc/secrets/mysql/username</td>
+                    <td>The username for the MySQL database</td>
+                    <td>wordpress</td>
+                </tr>
+                <tr>
+                    <td>/etc/secrets/mysql/password</td>
+                    <td>The password for the MySQL database</td>
+                    <td>TsxeFys8xw8jOtSV</td>
+                </tr>
+                <tr>
+                    <td>/etc/secrets/wordpress/mysql_username</td>
+                    <td>The username for the MySQL database</td>
+                    <td>wordpress</td>
+                </tr>
+                <tr>
+                    <td>/etc/secrets/wordpress/mysql_password</td>
+                    <td>The password for the MySQL database</td>
+                    <td>TsxeFys8xw8jOtSV</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="article-subtitle">Generating the Initial TLS Certificate</h2>
+        <p>
+            The self-signed certificate is needed as an intermediate solution, so NGINX can start up and certbot can go
+            through the TLS certificate request/renewal flow. In the command below, change the certificate subject to
+            something that makes sense for your situation and then run it. Once Certbot successfully requested a
+            certificate, you can restart the NGINX container or wait for the automatic configuration reload (every 6
+            hours) to configure the new certificate.
+        </p>
+        <pre>openssl req -x509 -newkey rsa:4096 -keyout nginx.key -out nginx.crt -days 365 -nodes \
+            -subj "/C=US/ST=Oregon/L=Portland/O=Company Name/OU=Org/CN=www.example.com"</pre>
+
+        <h2 class="article-subtitle">Updating the Versions and Changing the Secret Paths</h2>
+        <p>
+            Before using <span class="pre-inline">docker-compose up -d</span> to start the containers, you'll want to
+            make sure you're on recent and supported versions. Make sure you pick a MySQL version that's compatible with
+            the WordPress version you want to deploy. Also check the volume paths and change them in accordance with the
+            secrets generated earlier.
+        </p>
+        <pre>
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql:8.1.0
+    restart: always
+    volumes:
+    - /data/docker/mysql/var/lib/mysql:/var/lib/mysql
+    - /etc/secrets/mysql:/run/secrets
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root_password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER_FILE: /run/secrets/username
+      MYSQL_PASSWORD_FILE: /run/secrets/password
+
+  wordpress:
+    image: wordpress:6.3.0-php8.1-apache
+    restart: always
+    depends_on:
+      - mysql
+    volumes:
+      - /data/docker/wordpress/var/www/html:/var/www/html
+      - /etc/secrets/wordpress:/run/secrets
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER_FILE: /run/secrets/mysql_username
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/mysql_password
+
+  nginx:
+    image: website-nginx:1.0.0
+    restart: always
+    build:
+      context: ./nginx
+    volumes:
+      - /etc/secrets/nginx:/run/secrets
+      - /data/docker/certbot/var/www/certbot:/var/www/certbot
+      - /data/docker/letsencrypt/etc/letsencrypt:/etc/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+    command: "/bin/sh -c '/scripts/start-nginx.sh'"
+
+  certbot:
+    image: website-certbot:1.0.0
+    restart: always
+    build:
+      context: ./certbot
+    volumes:
+      - /data/docker/certbot/var/www/certbot:/var/www/certbot
+      - /data/docker/letsencrypt/etc/letsencrypt:/etc/letsencrypt
+    entrypoint: "/bin/sh -c '/scripts/start-certbot.sh'"</pre>
+
+        <h2 class="article-subtitle">Configure Your Domain</h2>
+        <p>
+            The <span class="pre-inline">start-certbot.sh</span> script is responsible for obtaining and renewing a
+            Let's Encrypt certificate in order to secure your website with TLS. In this script, replace
+            <span class="pre-inline">example.com</span> with your own domain (there are multiple occurrences!). Use an
+            active email address for the <span class="pre-inline">--email</span> argument, because Let's Encrypt
+            occasionally sends out important emails.
+        </p>
+        <p>
+            Once the Certbot container starts running, the aforementioned script will immediately kick into action.
+            The first task it performs is renew the certificate if needed. It will do this on a daily basis by running
+            the <span class="pre-inline">certbot renew</span> command. Once this step is done, it will immediately copy
+            the Let's Encrypt certificate to a separate staging directory to indicate it's ready to be picked up by
+            NGINX. This staging directory is shared between the Certbot and NGINX containers.
+        </p>
+
+        <h2 class="article-subtitle">The NGINX Startup Script</h2>
+        <p>
+            The main purpose of the <span class="pre-inline">start-nginx.sh</span> script is to refresh the TLS
+            certificate in case a new one has been staged by Certbot. This script live reloads NGINX every 6 hours,
+            effectively changing the TLS certificate without downtime.
+        </p>
+
+        <h2 class="article-subtitle">Starting the Containers</h2>
+        <p>
+            Everything should now be configured and ready to be started. You can start all services by running the
+            following command.
+        </p>
+        <pre>docker-compose up -d --build</pre>
+        <pre>$ docker container ls
+CONTAINER ID        IMAGE                           COMMAND                  CREATED             STATUS              PORTS                                      NAMES
+e628218e00ed        wordpress:6.3.0-php8.1-apache   "docker-entrypoint.s…"   4 minutes ago       Up 4 minutes        80/tcp                                     docker-wordpress-wordpress-1
+68136514078c        website-nginx:1.0.0             "/docker-entrypoint.…"   4 minutes ago       Up 4 minutes        0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   docker-wordpress-nginx-1
+1cf7fdba41b7        mysql:8.1.0                     "docker-entrypoint.s…"   4 minutes ago       Up 4 minutes        3306/tcp, 33060/tcp                        docker-wordpress-mysql-1</pre>
+        <p>
+            You should now be able to browse to <span class="pre-inline">https://{your-ip}</span> and see the WordPress
+            setup screen (after ignoring a security warning because of the self-signed certificate).
+        </p>
+        <div class="image-container">
+            <img class="image" src="../assets/imgs/wordpress-setup-screen.png" alt="The WordPress setup screen">
+        </div>
+
+        <h2 class="article-subtitle">Setting the Public URL (DNS Name) in WordPress</h2>
+        <p>
+            After creating DNS records for your domain to point it to the new WordPress installation, you can set the
+            public URL in the WordPress settings. This is important because WordPress will use this value in redirects
+            and to construct file paths.
+        </p>
+
+        <h2 class="article-subtitle">Next Steps</h2>
+        <p>
+            If all went well, your WordPress instance should now be up and running, secured by NGINX with automatic
+            TLS certificate rotation. Once NGINX picks up the certificate that Certbot newly requested, your browser
+            should display the WordPress content without any security warnings. You can now install your favorite
+            WordPress plugins and publish your content.
+        </p>
+    </section>
+</body>
+</html>
