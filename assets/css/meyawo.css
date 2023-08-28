@@ -9511,6 +9511,10 @@ pre .code {
   }
 }
 
+.header-link:hover {
+  color: #1e549f;
+}
+
 .section {
   padding-top: 6rem;
 }

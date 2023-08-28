@@ -1,3 +1,9 @@
+.header-link {
+    &:hover {
+        color: $primary;
+    }
+}
+
 .section {
     padding-top: 6rem;
 
