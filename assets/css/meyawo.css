@@ -9801,6 +9801,7 @@ pre .code {
 .github-repository .text-container {
   margin: 1rem;
   margin-left: 1rem;
+  min-width: 0;
 }
 .github-repository .text-container > * {
   margin: 0;
