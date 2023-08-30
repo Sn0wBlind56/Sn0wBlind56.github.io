@@ -9570,6 +9570,42 @@ pre .code {
   margin-bottom: 2rem;
 }
 
+.service-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.service-header .line {
+  flex: 1;
+  border: 1px solid #ced4da;
+}
+.service-header .line:first-child {
+  margin-right: 0.5rem;
+}
+.service-header .line:last-child {
+  margin-left: 0.5rem;
+}
+.service-header .icons-wrapper {
+  max-height: 3rem;
+  display: flex;
+}
+.service-header .icons-wrapper .icon {
+  opacity: 0.75;
+  width: 2.5rem;
+  margin: 0 0.5rem;
+}
+@media (min-width: 576px) {
+  .service-header .icons-wrapper .icon {
+    width: 3rem;
+  }
+}
+@media (min-width: 768px) {
+  .service-header .icons-wrapper .icon {
+    width: 4rem;
+  }
+}
+
 .skills-row {
   margin-top: 2rem;
 }
