@@ -9846,6 +9846,9 @@ pre .code {
 .github-repository .text-container > * {
   margin: 0;
 }
+.github-repository .text-container .link {
+  font-weight: 600;
+}
 .github-repository .name {
   color: #000;
   font-size: 1rem;
