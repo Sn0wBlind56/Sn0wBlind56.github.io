@@ -1,6 +1,10 @@
 ::-moz-selection{ background:$primary;color:white }
 ::selection{ background:$primary;color:white }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0 auto 2rem auto;
     max-width: $max-page-width;

@@ -8946,6 +8946,10 @@ a.text-dark:hover, a.text-dark:focus {
   color: white;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0 auto 2rem auto;
   max-width: 64rem;
