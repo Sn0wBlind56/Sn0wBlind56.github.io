@@ -9803,6 +9803,15 @@ pre .code {
   margin-bottom: 0.2rem;
 }
 
+.project-video {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4rem;
+}
+.project-video iframe {
+  border: none;
+}
+
 .main-project-image {
   max-width: 100%;
   margin-bottom: 2rem;
