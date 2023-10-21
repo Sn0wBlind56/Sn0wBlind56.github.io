@@ -9531,6 +9531,14 @@ pre .code {
   font-weight: 400;
   opacity: 0.6;
 }
+.section h3:not(:first-of-type) {
+  margin-top: 4rem;
+}
+@media (min-width: 768px) {
+  .section h3:not(:first-of-type) {
+    margin-top: 2rem;
+  }
+}
 .section p {
   text-align: justify;
 }
@@ -9742,7 +9750,6 @@ pre .code {
   align-items: flex-start;
 }
 .article .image-container {
-  max-width: 100%;
   margin: 0 auto;
   max-width: 16rem;
 }
@@ -9764,7 +9771,6 @@ pre .code {
     flex-direction: row;
   }
   .article .image-container {
-    max-width: 16rem;
     margin-right: 2rem;
   }
 }
