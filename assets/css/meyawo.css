@@ -9531,6 +9531,23 @@ pre .code {
   font-weight: 400;
   opacity: 0.6;
 }
+.section .metadata-short, .section .metadata-expanded {
+  font-weight: 600;
+}
+.section .metadata-short > *, .section .metadata-expanded > * {
+  width: fit-content;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  background-color: #dee2e6;
+}
+.section .metadata-short > * {
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+.section .metadata-expanded {
+  margin-top: 1rem;
+  margin-bottom: 4rem;
+}
 .section h3:not(:first-of-type) {
   margin-top: 4rem;
 }
