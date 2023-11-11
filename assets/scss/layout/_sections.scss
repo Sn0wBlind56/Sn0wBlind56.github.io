@@ -267,14 +267,35 @@
 
     .image-container {
         margin: 0 auto;
-        max-width: 16rem;
+        padding-top: 1rem;
 
         .image {
             max-width: 100%;
+            max-height: 8rem;
+        }
+
+        @media (min-width: map-get($grid-breakpoints, "sm")) {
+            min-width: 8rem;
+            max-width: 8rem;
+
+            .image {
+                max-height: 8rem;
+            }
+        }
+
+        @media (min-width: map-get($grid-breakpoints, "lg")) {
+            min-width: 12rem;
+            max-width: 12rem;
+
+            .image {
+                max-height: 12rem;
+            }
         }
     }
 
     .text-container {
+        padding-top: 1rem;
+
         .description {
             font-style: italic;
         }
