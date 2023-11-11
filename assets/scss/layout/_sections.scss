@@ -275,6 +275,7 @@
         }
 
         @media (min-width: map-get($grid-breakpoints, "sm")) {
+            margin: initial;
             min-width: 8rem;
             max-width: 8rem;
 
@@ -284,6 +285,7 @@
         }
 
         @media (min-width: map-get($grid-breakpoints, "lg")) {
+            margin: initial;
             min-width: 12rem;
             max-width: 12rem;
 

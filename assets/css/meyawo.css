@@ -9759,6 +9759,7 @@ pre .code {
 }
 @media (min-width: 576px) {
   .article .image-container {
+    margin: initial;
     min-width: 8rem;
     max-width: 8rem;
   }
@@ -9768,6 +9769,7 @@ pre .code {
 }
 @media (min-width: 992px) {
   .article .image-container {
+    margin: initial;
     min-width: 12rem;
     max-width: 12rem;
   }
@@ -9777,6 +9779,9 @@ pre .code {
 }
 .article .text-container {
   padding-top: 1rem;
+}
+.article .text-container .metadata {
+  font-style: italic;
 }
 .article .text-container .description {
   font-style: italic;
