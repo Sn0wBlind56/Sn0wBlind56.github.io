@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="How to deploy and run a WordPress-based website or blog in Docker with fully automated TLS support through Let's Encrypt.">
+    <meta name="theme-color" content="#1e549f">
+
+    <title>Installing a Kubernetes Cluster on Ubuntu with kubeadm - Jelle Spoelders</title>
+
+    <link rel="stylesheet" href="../assets/css/meyawo.css">
+
+    <link rel="icon" type="image/x-icon" href="../assets/imgs/js.png">
+</head>
+<body>
+    <section class="section">
+        <h1>Installing a Kubernetes Cluster on Ubuntu with kubeadm</h1>
+
+        <h2 class="article-subtitle">Introduction</h2>
+        <p>
+            In this guide, I will cover the installation of a single-node Kubernetes cluster on an Ubuntu host through
+            kubeadm. To keep it as straight-forward as possible, I chose the tools that are the most popular and easy to
+            use. As such, the stack will consist of Ubuntu, Docker, vanilla Kubernetes and Weave Net. At the end of this
+            guide, you will have a basic but ready-to-use Kubernetes cluster.
+        </p>
+        <p>
+            If you're wondering why I chose to install Kubernetes "the hard way",
+            <a href="https://www.padok.fr/en/blog/minikube-kubeadm-kind-k3s">this article</a> provides an overview and
+            comparison of the different options. In essence, I chose kubeadm so that I can have a Kubernetes cluster
+            that comes as close to a real production environment as possible, where I have every feature at my disposal.
+        </p>
+
+        <h2 class="article-subtitle">Installing the Docker Engine</h2>
+        <p>
+            As the first step, we need to install a container runtime for Kubernetes to use. Docker is the most popular
+            choice, for which you can find the installation commands below. Note that we only install the Docker Engine
+            here, not Docker Desktop.
+        </p>
+        <pre>sudo apt-get install ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin</pre>
+
+        <p>
+            After executing these commands, you should have Docker up and running. You can verify this by issuing the
+            <span class="pre-inline">sudo docker run hello-world</span> command. With the current configuration, you
+            always have to be root to use the docker command. Add your user to the appropriate group by running the
+            command below to use docker without elevated privileges.
+        </p>
+
+        <pre>sudo usermod -aG docker $USER</pre>
+
+        <h2 class="article-subtitle">Installing the Kubernetes Prerequisites</h2>
+        <p>
+            The kubelet is the primary agent that runs on every node of the cluster. It uses the configured Container
+            Runtime Interface (CRI) to start Pods and containers. The Docker Engine is such a runtime, but the kubelet
+            cannot use it out of the box because it does not conform to the CRI. In order to close that gap, we need to
+            make the Docker Engine CRI-conformant by installing the <span class="pre-inline">cri-dockerd</span> adapter.
+            The easiest way to do this, is by downloading the latest release (Debian package) and installing it manually
+            with the commands below.
+        </p>
+        <pre>
+curl -L https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.7/cri-dockerd_0.3.7.3-0.ubuntu-jammy_amd64.deb -o cri-dockerd_0.3.7.3-0.ubuntu-jammy_amd64.deb
+sudo dpkg -i cri-dockerd_0.3.7.3-0.ubuntu-jammy_amd64.deb</pre>
+
+        <p>One this is done, we can install the binaries required for the Kubernetes installation.</p>
+
+        <pre>sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl</pre>
+
+        <h2 class="article-subtitle">Deploying the Cluster</h2>
+        <p>
+            At last, it's time to install the actual cluster, which we can do in a single command. Note that I gave my
+            Ubuntu host a static IP address, which I pass to the <span class="pre-inline">kubeadm</span> command as part
+            of the <span class="pre-inline">apiserver-advertise-address</span> argument. If you don't do this, any
+            future IP address changes will require new certificates and configuration. We also explicitly point
+            <span class="pre-inline">kubeadm</span> to the Docker Engine CRI adapter.
+        </p>
+        <pre>sudo kubeadm init --apiserver-advertise-address=192.168.149.100 --cri-socket=/var/run/cri-dockerd.sock</pre>
+
+        <p>Give kubeadm a minute to perform all of its actions. Then, run the commands it suggests.</p>
+
+        <pre>mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config</pre>
+
+        <p>
+            All Kubernetes core services should now be operational, except for CoreDNS, which is waiting for a network
+            addon. You can verify this with the <span class="pre-inline">kubectl get pods --all-namespaces</span>
+            command.
+        </p>
+
+        <pre>
+NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE
+kube-system   coredns-5dd5756b68-8knbn                   0/1     Pending   0          42s
+kube-system   coredns-5dd5756b68-vwtsp                   0/1     Pending   0          42s
+kube-system   etcd-jelle-virtualbox                      1/1     Running   4          47s
+kube-system   kube-apiserver-jelle-virtualbox            1/1     Running   4          47s
+kube-system   kube-controller-manager-jelle-virtualbox   1/1     Running   28         47s
+kube-system   kube-proxy-l4xg7                           1/1     Running   0          42s
+kube-system   kube-scheduler-jelle-virtualbox            1/1     Running   28         47s</pre>
+
+        <h2 class="article-subtitle">Deploying the Weave Net Addon</h2>
+
+        <p>
+            The final step is installing a network addon that will make the cluster fully operational. There's a
+            plethora of options available, but I chose Weave Net because of its simplicity. Installing it only requires
+            one <span class="pre-inline">kubectl apply</span> command.
+        </p>
+
+        <pre>kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml</pre>
+
+        <pre>serviceaccount/weave-net created
+clusterrole.rbac.authorization.k8s.io/weave-net created
+clusterrolebinding.rbac.authorization.k8s.io/weave-net created
+role.rbac.authorization.k8s.io/weave-net created
+rolebinding.rbac.authorization.k8s.io/weave-net created
+daemonset.apps/weave-net created</pre>
+
+        <p>
+            After waiting for a couple of minutes, you should see that all Pods are in the "Running" status, which
+            indicates that your cluster is ready to be used.
+        </p>
+
+        <pre>kubectl get pods --all-namespaces</pre>
+
+        <pre>
+NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE
+kube-system   coredns-5dd5756b68-8knbn                   1/1     Running   0          2m37s
+kube-system   coredns-5dd5756b68-vwtsp                   1/1     Running   0          2m37s
+kube-system   etcd-jelle-virtualbox                      1/1     Running   4          2m42s
+kube-system   kube-apiserver-jelle-virtualbox            1/1     Running   4          2m42s
+kube-system   kube-controller-manager-jelle-virtualbox   1/1     Running   28         2m42s
+kube-system   kube-proxy-l4xg7                           1/1     Running   0          2m37s
+kube-system   kube-scheduler-jelle-virtualbox            1/1     Running   28         2m42s
+kube-system   weave-net-4sz5m                            2/2     Running   0          28s</pre>
+
+    </section>
+</body>
+</html>
