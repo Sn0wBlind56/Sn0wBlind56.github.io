@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Guide on how to install the MetalLB load balancer on a bare metal Kubernetes cluster.">
+    <meta name="theme-color" content="#1e549f">
+
+    <title>Supercharge Your Kubernetes Cluster with a Load Balancer - Jelle Spoelders</title>
+
+    <link rel="stylesheet" href="../assets/css/meyawo.css">
+
+    <link rel="icon" type="image/x-icon" href="../assets/imgs/js.png">
+</head>
+<body>
+    <section class="section">
+        <h1>Supercharge Your Kubernetes Cluster with a Load Balancer</h1>
+
+        <div class="metadata-expanded">
+            <p>&#x270D; Hands-On Guide</p>
+            <p>&#x1F4C5; Published on December 18, 2023</p>
+        </div>
+
+        <h2 class="article-subtitle">Introduction</h2>
+        <p>
+            Deploying a Kubernetes cluster on a major cloud comes with many benefits. One of these benefits is a load
+            balancer which you can use to expose your service to the outside world. This kind of functionality isn't
+            available by default when you decide to run Kubernetes bare metal or on your local development machine.
+        </p>
+        <p>
+            While vendors implement this concept in their own way, it's not impossible to use this feature on your own
+            Kubernetes cluster, be it a bare metal setup or a single-node setup running inside of a virtual machine on
+            your laptop. This guide will teach you how you can install and configure a load balancer on any Kubernetes
+            environment, making it very suitable for both production and development purposes.
+        </p>
+
+        <h2 class="article-subtitle">Prerequisites and Assumptions</h2>
+        <p>
+            This guide builds on top of the previous one: <a href="kubeadm-installation.html">Installing a Kubernetes
+            Cluster on Ubuntu with kubeadm</a>. As such, I assume you already have Kubernetes installed with a
+            functioning network add-on, so we can get to the load balancer part right away.
+        </p>
+
+        <h2 class="article-subtitle">The Concept of a Load Balancer</h2>
+        <p>
+            Within Kubernetes, a load balancer is a special kind of Service that claims an IP address for its entire
+            lifetime. This concept revolves around external connectivity, meaning that a certain application becomes
+            accessible to the outside world. A typical use case is a web application running on a cluster that you
+            decide to make accessible to users on the internet. With a Service of type ClusterIP (i.e., a "regular"
+            Service) or NodePort, that application is only accessible from within the (network) bounds of the Kubernetes
+            cluster. A Service of type LoadBalancer effectively allows the outside world to connect to your cluster on a
+            predefined IP address and port.
+        </p>
+
+        <h2 class="article-subtitle">MetalLB</h2>
+        <p>
+            Kubernetes does not offer a load balancer implementation out of the box. This is a specification you need to
+            implement yourself as the owner or administrator of the cluster. Enter MetalLB, an easy-to-use load balancer
+            implementation that integrates with standard network equipment. It's a popular choice because it requires
+            minimal configuration and because it "just works".
+        </p>
+        <p>
+            While the project remains in beta, it has been around for quite some time and seems to work just fine in
+            production environments. Here's a quote from their own website.
+        </p>
+        <p class="quote">
+            MetalLB is being used in several production and non-production clusters, by several people and companies.
+            Based on the infrequency of bug reports, MetalLB appears to be robust in those deployments.
+        </p>
+
+        <h2 class="article-subtitle">Installing MetalLB</h2>
+        <p>
+            Since I am using VirtualBox to run a single-node Kubernetes cluster, I will cover the setup required for
+            this specific use case. However, everything I do here should be applicable to any bare metal cluster. It
+            doesn't require more than a basic network setup and some reserved IP addresses.
+        </p>
+        <p>
+            The people from the MetalLB project have made it very easy for us by providing a single manifest file you
+            can apply to your cluster. This manifest installs everything you need to start using MetalLB. Besides the
+            deployment itself, it also defines RBAC objects required for its configuration and usage, and custom
+            resources that are specific to MetalLB such as IPAddressPool. One thing to note is that by default, in a
+            single node cluster, you cannot schedule workloads because the only node you have is the master node. In
+            order to work around this, we have to remove the taint preventing this. The following commands take care of
+            removing that taint and deploying MetalLB.
+        </p>
+
+        <pre>kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml</pre>
+
+        <h2 class="article-subtitle">Configuring MetalLB</h2>
+        <p>
+            The first step to undertake is to reserve some IP addresses. You don't need to configure anything special on
+            your router or machine for this, but you do have to make sure these addresses aren't in use by any other
+            device. To the network, it will look as if the leader node (one of the nodes of your cluster) has multiple
+            IP addresses assigned to it.
+        </p>
+        <p>
+            I will reserve 5 IPv4 addresses in total, ranging from 192.168.149.101 to 192.168.149.105. This is easily
+            done by defining the following resource.
+        </p>
+
+        <pre>apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: personal-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.149.101-192.168.149.105</pre>
+
+        <p>
+            Now that we have configured our IP address pool, we need to tell MetalLB in which mode it should operate for
+            these addresses. Since I'm using a simple Kubernetes setup, I will also choose the simple layer 2 mode. The
+            benefit of this configuration is that it works with any network setup. The downside is that all traffic for
+            a Service IP goes through one node, which can potentially cause a bottleneck. It's also worth mentioning
+            that with this configuration, failover can take multiple seconds to occur.
+        </p>
+        <p>
+            In the configuration below, I refer to the IPAddressPool I created earlier. This is optional, and leaving it
+            out simply means you apply layer 2 mode to all IP address pools defined in this cluster.
+        </p>
+
+        <pre>apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: personal-pool-advertisement
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - personal-pool</pre>
+
+        <h2 class="article-subtitle">Configuring MetalLB</h2>
+        <p>
+            At this point, we can configure a Service of type LoadBalancer and have MetalLB automatically assign an IP
+            address to it from the previously defined address pool. Let's deploy a basic application such as NGINX to
+            prove that it works.
+        </p>
+
+        <pre>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80</pre>
+
+        <pre>apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80</pre>
+
+        <p>
+            After defining this Service, it almost immediately gets an IP address which we can connect to from outside
+            the cluster. This is visible in the Kubernetes services overview.
+        </p>
+
+        <pre>jelle@jelle-VirtualBox:~/Sources/MetalLB$ kubectl get services
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP       PORT(S)        AGE
+kubernetes   ClusterIP      10.96.0.1       <none>            443/TCP        36d
+nginx        LoadBalancer   10.97.243.162   192.168.149.101   80:32306/TCP   71s</pre>
+
+        <p>A simple <code>curl</code> command also proves that NGINX is reachable from outside the cluster.</p>
+
+        <pre>C:\Users\JelleS>curl http://192.168.149.101
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+&lt;style&gt;
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+    font-family: Tahoma, Verdana, Arial, sans-serif; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;
+&lt;p&gt;If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.&lt;/p&gt;
+
+&lt;p&gt;For online documentation and support please refer to
+&lt;a href="http://nginx.org/"&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;
+Commercial support is available at
+&lt;a href="http://nginx.com/"&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;/em&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+        <h2 class="article-subtitle">Summary</h2>
+
+        <p>
+            In this guide we have seen how to install the MetalLB load balancer, effectively adding a "cloud feature" to
+            your bare metal production or development Kubernetes cluster. While the implementation and configuration
+            covered in this guide doesn't match up completely with the load balancers offered by cloud providers, it
+            does fulfill the basic needs. Most importantly, it gives you the option to test these kind of features
+            without being dependent on a major cloud, saving you both time and costs.
+        </p>
+
+    </section>
+</body>
+</html>
