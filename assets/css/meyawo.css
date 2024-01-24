@@ -9539,6 +9539,7 @@ pre .code {
   height: 2.5rem;
   border-radius: 2rem;
   padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
   background-color: #dee2e6;
 }
 .section .metadata-short > * {
