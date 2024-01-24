@@ -52,6 +52,20 @@
 
     p {
         text-align: justify;
+
+        .inline-icon {
+            max-width: 1rem;
+            max-height: 1rem;
+        }
+
+        &.tag {
+            display: flex;
+            align-items: center;
+
+            .content::before {
+                content: "\00a0";
+            }
+        }
     }
 
     &-sm {

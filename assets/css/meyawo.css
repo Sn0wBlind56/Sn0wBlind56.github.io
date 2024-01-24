@@ -9559,6 +9559,17 @@ pre .code {
 .section p {
   text-align: justify;
 }
+.section p .inline-icon {
+  max-width: 1rem;
+  max-height: 1rem;
+}
+.section p.tag {
+  display: flex;
+  align-items: center;
+}
+.section p.tag .content::before {
+  content: " ";
+}
 .section-sm {
   padding: 40px 0 !important;
 }
