@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="A practical guide on creating and using Local Persistent Volumes on Kubernetes, thereby leveraging node storage. Ideal for on-premise clusters and test environments.">
+    <meta name="theme-color" content="#1e549f">
+
+    <title>Mastering Local Persistent Volumes on Kubernetes: A Practical Guide - Jelle Spoelders</title>
+
+    <link rel="stylesheet" href="../assets/css/meyawo.css">
+
+    <link rel="icon" type="image/x-icon" href="../assets/imgs/js.png">
+</head>
+<body>
+    <section class="section">
+        <h1>Mastering Local Persistent Volumes on Kubernetes: A Practical Guide</h1>
+
+        <div class="metadata-expanded">
+            <p class="tag">
+                <img src="../assets/imgs/kubernetes.svg" alt="" class="inline-icon">
+                <span class="content">Kubernetes</span>
+            </p>
+            <p>&#x270D; Hands-On Guide</p>
+            <p>&#x1F4C5; Published on January 24, 2024</p>
+        </div>
+
+        <h2 class="article-subtitle">Introduction</h2>
+        <p>
+            Kubernetes is an extremely powerful platform that allows you to easily schedule hundreds of workloads across
+            dozens of nodes. In many cases, a large portion of these containers can do their job without ever having to
+            think about storage or disk space. Sooner or later, however, you'll want to deploy an application that
+            requires persistent storage. Without any specific configuration, any files written to disk are lost forever
+            when a Pod gets deleted or evicted. Luckily, Kubernetes provides plenty of options to resolve this issue.
+            While the bulk of these solutions are specific to the cloud you're using (e.g. Microsoft Azure, Google Cloud
+            Platform or Amazon Web Services), some cloud-agnostic alternatives exist. The simplest choice is to use
+            Local Persistent Volumes, which is built into Kubernetes itself and has been promoted to General
+            Availability in version 1.14.
+        </p>
+
+        <h2 class="article-subtitle">Persistent Volumes</h2>
+        <p>
+            A Persistent Volume is a definition of storage that is available in the cluster and which has been
+            provisioned either manually by an administrator (static) or automatically by a Storage Class provisioner
+            (dynamic). It captures the details of a piece of storage backed by a specific storage technology such as
+            NFS, local storage or a cloud-provider-specific storage system. The <code>PersistentVolume</code> resource
+            typically includes the storage class, capacity and supported access modes (e.g. read-write by a single
+            node). In turn, a Storage Class is the description of a specific kind of storage that can be made available
+            to the cluster, such as regular HDD storage, high-speed SSD storage or Azure File Storage.
+        </p>
+
+        <p>
+            Persistent Volumes can be provisioned either statically or dynamically. <span class="font-weight-bold">
+            Static provisioning</span> simply means the cluster administrator has to perform a manual action to create
+            that Persistent Volume. Consequently, the administrator is also responsible for creating, maintaining and
+            cleaning up the underlying storage, such as (a directory on) a physical HDD. This type of provisioning is
+            more common with "vanilla" clusters installed from scratch, such as on-premise Kubernetes installations or
+            clusters used for development and testing purposes. The cluster administrator has total control over what
+            kind of storage they make available to the cluster.
+        </p>
+
+        <p>
+            <span class="font-weight-bold">Dynamic provisioning</span> means that Persistent Volumes get created
+            on-demand by an automated system whenever an application calls for it. In this case, the application is
+            leading in what type and size of storage gets provisioned. Cloud providers typically include this type of
+            provisioning in their offering.
+        </p>
+
+        <h2 class="article-subtitle">Persistent Volume Claims</h2>
+        <p>
+            A Persistent Volume (PV) is an abstraction layer that decouples persistent storage from individual Pods.
+            Consequently, it has a completely separate lifecycle, meaning your Persistent Volume will stay in place when
+            your Pod gets deleted. The bridge between a Pod and a Persistent Volume is made through a Persistent Volume
+            Claim (PVC).
+        </p>
+
+        <p>
+            As the name implies, a PVC attempts to claim a certain type and amount of storage by defining the desired
+            storage class, requested capacity and access mode. PVCs typically only get removed whenever the entire
+            application gets removed from the cluster. What happens as a result depends on the way the Persistent Volume
+            was defined. This phase is called <span class="font-weight-bold">reclaiming</span> the Persistent Volume.
+        </p>
+
+        <p>
+            With most cloud providers, Persistent Volumes are automatically deleted (reclaimed) whenever the Persistent
+            Volume Claim gets removed. Therefore, deleting the Persistent Volume Claim has a direct effect on the
+            underlying storage (e.g. the virtual hard disk will be removed). This makes sense, because the PV gets
+            provisioned the same way: it is created on-demand whenever an application requires it through the definition
+            of a PVC.
+        </p>
+
+        <p>
+            With static provisioning, the cluster administrator is responsible for the maintenance and cleanup of
+            Persistent Volumes. Kubernetes itself will not delete any files from the underlying storage and will keep
+            the Persistent Volume around in the <code>Released</code> state. It's then up to you as the cluster
+            administrator to manually make that storage available again. If you want to reuse it for another
+            application, you need to remove all files from the underlying storage and recreate the Persistent Volume in
+            Kubernetes.
+        </p>
+
+        <h2 class="article-subtitle">Local Persistent Volumes</h2>
+        <p>
+            Out of the box, Kubernetes provides support for Local Persistent Volumes. These are Persistent Volumes
+            backed by a node's local storage (i.e., the physical disk). While you can define your own Storage Class to
+            tweak the binding behavior and make it more intelligent, it isn't strictly required. As long as the PV and
+            the PVC use the same Storage Class name, Kubernetes will be able to bind that claim. Defining a Local
+            Persistent Volume is fairly simple and can be done as follows.
+        </p>
+
+        <pre>apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: hdd-chunk-50g-1
+  labels:
+    storage-type: hdd
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /k8s-data-hdd/chunk-50g-1
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - pop-os</pre>
+
+        <p>
+            In the above YAML snippet, we define the <code>PersistentVolume</code> resource with a capacity of 50 GiB.
+            Due to its very nature, this kind of Persistent Volume is bound to a predefined path on the physical disk of
+            a specific node in the cluster. In this case, that's the node with hostname <code>pop-os</code>.
+        </p>
+
+        <p>
+            It's important to note that Kubernetes does not reserve any disk space whatsoever. As a cluster
+            administrator, you need to make sure all Persistent Volumes are defined in line with the available storage.
+            In other words, you need to ensure that sufficient disk space is available and files can be written to the
+            configured path. Even when the total capacity of the HDD is only 100 GiB, Kubernetes won't stop you from
+            defining several 200 GiB Persistent Volumes.
+        </p>
+
+        <p>
+            The following snippet shows an example definition of a Persistent Volume Claim. The storage class name and
+            label selector tells Kubernetes what to look for when trying to bind this PVC to one of the available PVs.
+            As long as this PVC requests less or equal storage capacity than defined in the PV, it can be bound to it.
+            Note that <code>PersistentVolume</code> exists as a cluster resource, while
+            <code>PersistentVolumeClaim</code> resides within a namespace.
+        </p>
+
+        <pre>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: your-data
+  namespace: your-application
+spec:
+  storageClassName: local-storage
+  selector:
+    matchLabels:
+      storage-type: hdd
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi</pre>
+
+        <h2 class="article-subtitle">Example: Deploying a Database</h2>
+
+        <p>
+            Now that we went over the concepts, it's time to put it all into practice and walk through an example of
+            deploying a PostgreSQL database. Starting off, we need to have a location for PostgreSQL to put its files.
+            We'll create a directory and change the owning user and group to ID <code>2001</code>, so we can work with a
+            predictable UID and GID inside the container and avoid permission issues.
+        </p>
+
+        <pre>sudo mkdir -p /k8s-data/hdd-chunk-10g-1
+sudo chown 2001 /k8s-data/hdd-chunk-10g-1/
+sudo chgrp 2001 /k8s-data/hdd-chunk-10g-1/</pre>
+
+        <p>
+            Next, we define the Persistent Volume according to the created directory and intended disk space usage. As
+            mentioned before, we can't explicitly reserve any capacity through this configuration, so the listed storage
+            capacity is merely indicative and serves as a criteria for binding a Persistent Volume Claim (the requested
+            capacity must be smaller or equal to the storage capacity of the Persistent Volume).
+        </p>
+
+        <pre>apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: hdd-chunk-10g-1
+  labels:
+    storage-type: hdd
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /k8s-data/hdd-chunk-10g-1
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - jelle-virtualbox</pre>
+
+        <p>
+            Because Persistent Volume Claims are scoped to a namespace, we have to create one before we can define the
+            <code>PersistentVolumeClaim</code> resource.
+        </p>
+
+        <pre>kubectl create namespace postgresql</pre>
+
+        <pre>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql-data
+  namespace: postgresql
+spec:
+  storageClassName: local-storage
+  selector:
+    matchLabels:
+      storage-type: hdd
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi</pre>
+
+        <p>
+            These steps are all that's required for the volume part. At this point, we can deploy our application and
+            start using the storage we just claimed. I'll apply some best practices here and create a randomized secret
+            for the database's admin user. Then we can deploy the PostgreSQL instance itself, which we'll do through a
+            Deployment with exactly 1 replica (chosen for simplicity, alternatively a Stateful Set could be used). I
+            choose not to mount the default service account token, because the Pod simply doesn't need it and because
+            it makes the setup slightly more secure. I also run the container with user and group <code>2001</code>, so
+            that it matches the UID and GID of the assigned directory. The container would run as <code>root</code> (UID
+            and GID <code>0</code>) by default, which poses a risk because <code>root</code> inside the container is
+            also <code>root</code> on the host. This is especially problematic if the container has direct access to the
+            host's file system.
+        </p>
+
+        <pre>kubectl -n postgresql create secret generic postgresql-admin \
+    --from-literal=username=postgres \
+    --from-literal=password=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32)</pre>
+
+        <pre>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  namespace: postgresql
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: postgresql
+          image: postgres:12.4
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-admin
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-admin
+                  key: password
+          ports:
+            - name: postgres
+              containerPort: 5432
+          volumeMounts:
+            - name: postgresql-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: 250Mi
+            limits:
+              memory: 500Mi
+      volumes:
+        - name: postgresql-data
+          persistentVolumeClaim:
+            claimName: postgresql-data
+      securityContext:
+        runAsUser: 2001
+        runAsGroup: 2001</pre>
+        
+        <p>
+            We're all set now! PostgreSQL should have successfully started and be initialized, as indicated by the
+            following logs.
+        </p>
+
+        <pre>PostgreSQL init process complete; ready for start up.
+
+2024-01-14 21:29:31.126 UTC [1] LOG:  starting PostgreSQL 12.4 (Debian 12.4-1.pgdg100+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 8.3.0-6) 8.3.0, 64-bit
+2024-01-14 21:29:31.127 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2024-01-14 21:29:31.127 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2024-01-14 21:29:31.137 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2024-01-14 21:29:31.171 UTC [49] LOG:  database system was shut down at 2024-01-14 21:29:31 UTC
+2024-01-14 21:29:31.190 UTC [1] LOG:  database system is ready to accept connections</pre>
+
+        <p>
+            There is one <span class="font-weight-bold">big caveat</span> to look out for when using Local Persistent
+            Volumes. This specific storage configuration does not have any monitoring, restrictions or quota in place
+            whatsoever. This means there is <span class="font-weight-bold">no actual limit</span> on how much disk space
+            the Pod can use. Nothing stops the container from creating a 12 GiB file inside the 10 GiB local volume, as
+            illustrated in the following example.
+        </p>
+
+        <pre>$ kubectl -n postgresql exec -it postgresql-85bc4b5f4c-fp4mh -- /bin/bash
+I have no name!@postgresql-85bc4b5f4c-fp4mh:/$ dd bs=4096 count=3145728 if=/dev/zero of=/var/lib/postgresql/data/large-file.dat
+3145728+0 records in
+3145728+0 records out
+12884901888 bytes (13 GB, 12 GiB) copied, 42.0163 s, 307 MB/s</pre>
+
+        <pre>$ sudo du -sh /k8s-data/hdd-chunk-10g-1/
+13G     /k8s-data/hdd-chunk-10g-1/</pre>
+
+        <p>
+            The absence of a hard limit on these volumes might not be a big problem for small clusters, but for clusters
+            running hundreds of workloads this could pose a real risk. Once one container starts using more space than
+            requested, it can disrupt other Pods and the node can experience disk pressure, leading to downgraded
+            performance and Pod evictions. Fortunately, there is a way to work around this problem and mitigate this risk.
+        </p>
+
+        <h2 class="article-subtitle">File System in a File</h2>
+
+        <p>
+            Linux gives us the wonderful ability to create a file system inside a plain file. Once mounted, this file is
+            treated as a full-fledged file system that behaves just like a formatted disk partition. Just like with a
+            disk partition, it has a predefined size that cannot be altered from inside the file system. It's a simple
+            trick you can use to put a hard limit on a directory backing a Persistent Volume. Let's revise the steps
+            needed for this kind of configuration. Because we will start off by removing the previously created "chunk"
+            directory, I scale down the PostgreSQL deployment to 0 replicas so no Pods try to access the disk anymore.
+        </p>
+
+        <pre>kubectl -n postgresql scale deployment postgresql --replicas 0
+sudo rm -rf /k8s-data/hdd-chunk-10g-1/</pre>
+
+        <p>
+            The next step is creating the file in which we will create the file system. With the following command, we
+            can create a 10 GiB file that is filled with null bytes (it might take a minute).
+        </p>
+
+        <pre>jelle@jelle-VirtualBox:/k8s-data/fs$ sudo dd if=/dev/zero of=/k8s-data/fs/hdd-chunk-10g-1 bs=4096 count=2621440
+2621440+0 records in
+2621440+0 records out
+10737418240 bytes (11 GB, 10 GiB) copied, 24,7031 s, 435 MB/s</pre>
+
+        <p>
+            Once the file itself has been created, we can format it with the desired file system. The most logical
+            choice is <code>ext4</code>, which is the same file system as the one used by the node.
+        </p>
+
+        <pre>jelle@jelle-VirtualBox:/k8s-data/fs$ sudo mkfs.ext4 /k8s-data/fs/hdd-chunk-10g-1
+mke2fs 1.46.5 (30-Dec-2021)
+Discarding device blocks: done
+Creating filesystem with 2621440 4k blocks and 655360 inodes
+Filesystem UUID: a987be1d-cf07-4b50-bb4a-62ef1356f667
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (16384 blocks): done
+Writing superblocks and filesystem accounting information: done</pre>
+
+        <p>
+            In order to actually be able to use this file, we need to mount it to a location on disk. After running the
+            commands below, you can use <code>ls -lha /k8s-data/hdd-chunk-10g-1</code> analogous to any other disk
+            partition.
+        </p>
+
+        <pre>sudo mkdir /k8s-data/hdd-chunk-10g-1
+sudo mount -o loop,rw /k8s-data/fs/hdd-chunk-10g-1 /k8s-data/hdd-chunk-10g-1</pre>
+
+        <p>
+            Keep in mind that you need to configure this mount in <code>/etc/fstab</code> to preserve it throughout
+            reboots of the host.
+        </p>
+
+        <pre>$ cat /etc/fstab
+...
+/k8s-data/fs/hdd-chunk-10g-1 /k8s-data/hdd-chunk-10g-1 ext4 loop,rw 0 0</pre>
+
+        <p>
+            After mounting this new file system, we should create a subdirectory in which the actual data will be
+            stored. There are 2 reasons for doing this. The first reason is that some applications (including
+            PostgreSQL) refuse to start when they detect a <code>lost+found</code> directory. The second reason is that
+            using a subdirectory is more secure because it allows you to set permissions selectively (e.g. change the
+            owning user) without having to do so for the entire file system. For simplicity, I'll call this directory
+            <code>data</code>.
+        </p>
+
+        <pre>sudo mkdir /k8s-data/hdd-chunk-10g-1/data
+sudo chown 2001 /k8s-data/hdd-chunk-10g-1/data
+sudo chgrp 2001 /k8s-data/hdd-chunk-10g-1/data</pre>
+
+        <p>
+            Now, there is only one remaining step. We need to change the Deployment definition so that Kubernetes mounts
+            the <code>data</code> directory in the PostgreSQL container, instead of the file system root. More
+            specifically, we need to define a <code>subPath</code> for the mounted <code>postgresql-data</code> volume,
+            which is the directory we just created.
+        </p>
+
+        <pre>volumeMounts:
+  - name: postgresql-data
+    mountPath: /var/lib/postgresql/data
+    subPath: data</pre>
+
+        <p>
+            All done! Apply the Deployment again with <code>kubectl apply</code> and all PostgreSQL data files should be
+            contained within this <code>data</code> directory.
+        </p>
+
+        <p>
+            What would happen now if PostgreSQL tried to create a file with a larger size than this in-file file system?
+        </p>
+
+        <pre>jelle@jelle-VirtualBox:/k8s-data/fs$ kubectl -n postgresql exec -it postgresql-8569b9b767-6d49h -- /bin/bash
+I have no name!@postgresql-8569b9b767-6d49h:/$ dd bs=4096 count=3145728 if=/dev/zero of=/var/lib/postgresql/data/large-file.dat
+dd: error writing '/var/lib/postgresql/data/large-file.dat': No space left on device
+2409364+0 records in
+2409363+0 records out
+9868750848 bytes (9.9 GB, 9.2 GiB) copied, 45.4573 s, 217 MB/s</pre>
+
+        <p>
+            The application has no way anymore to step outside the predefined bounds. Any attempt to do so results in an
+            error.
+        </p>
+
+        <h2 class="article-subtitle">Summary, Benefits and Drawbacks</h2>
+
+        <p>
+            It only takes about 25 lines of YAML to define a local Persistent Volume and merely 15 to claim it for use.
+            This makes local storage an interesting choice if you don't mind performing a few manual actions. It also
+            proves that storage within a Kubernetes cluster doesn't always have to be as complicated as some make it out
+            to be. That being said, this is not a one-size-fits-all solution and comes with its fair share of drawbacks.
+            Let's have a look at the considerations for Local Persistent Volumes so that you can make a well-informed
+            decision about whether this is worth trying out for your specific use case.
+        </p>
+
+        <h3>Benefits</h3>
+        <ul>
+            <li>Straightforward configuration</li>
+            <li>Complete control over where exactly files can be written</li>
+            <li>Available by default on <span class="font-weight-bold">any Kubernetes cluster</span></li>
+        </ul>
+
+        <h3>Drawbacks</h3>
+        <ul>
+            <li>
+                Scheduling is limited to the specific nodes offering local storage
+            </li>
+            <li>
+                Manual division of disk space without any built-in option to reserve space on the file system.
+                <span class="font-weight-bold">Unless you take precautionary actions</span>, storage use cannot be
+                regulated and Pods can use more storage than requested in the Persistent Volume Claim.
+            </li>
+            <li>No redundancy out of the box, you are responsible for configuring RAID or taking other measures</li>
+            <li>No automatic cleanup, volumes must be wiped and recreated manually whenever they are released</li>
+        </ul>
+
+    </section>
+</body>
+</html>
