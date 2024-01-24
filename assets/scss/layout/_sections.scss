@@ -23,6 +23,7 @@
 
         & > * {
             width: fit-content;
+            height: 2.5rem;
             border-radius: 2rem;
             padding: 0.5rem 1rem;
             background-color: $gray-300;
@@ -33,7 +34,6 @@
         & > * {
             display: inline-block;
             margin-right: 0.5rem;
-            
         }
     }
 
@@ -57,15 +57,19 @@
 
     p {
         text-align: justify;
+    }
 
-        .inline-icon {
-            max-width: 1rem;
-            max-height: 1rem;
-        }
+    .tag-wrapper {
+        vertical-align: top;
 
-        &.tag {
+        .tag {
             display: flex;
             align-items: center;
+            height: 1.5rem;
+
+            .inline-icon {
+                max-height: 1rem;
+            }
 
             .content::before {
                 content: "\00a0";
@@ -309,36 +313,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-
-    .image-container {
-        margin: 0 auto;
-        padding-top: 1rem;
-
-        .image {
-            max-width: 100%;
-            max-height: 8rem;
-        }
-
-        @media (min-width: map-get($grid-breakpoints, "sm")) {
-            margin: initial;
-            min-width: 8rem;
-            max-width: 8rem;
-
-            .image {
-                max-height: 8rem;
-            }
-        }
-
-        @media (min-width: map-get($grid-breakpoints, "lg")) {
-            margin: initial;
-            min-width: 12rem;
-            max-width: 12rem;
-
-            .image {
-                max-height: 12rem;
-            }
-        }
-    }
 
     .text-container {
         padding-top: 1rem;
