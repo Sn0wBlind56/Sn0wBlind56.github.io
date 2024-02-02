@@ -3,7 +3,7 @@
     display: flex;
     align-items: center;
 
-    a {
+    a.link {
         font-weight: 600;
         font-size: 1rem;
         display: inline-flex;
@@ -13,9 +13,9 @@
             color: $primary;
         }
 
-        &::before {
+        .link-decoration {
+            color: $primary;
             font-size: 1.5rem;
-            content: '\01F850';
             margin-right: 0.5rem;
         }
     }

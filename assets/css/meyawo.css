@@ -9875,18 +9875,18 @@ pre .code {
   display: flex;
   align-items: center;
 }
-.article-header a {
+.article-header a.link {
   font-weight: 600;
   font-size: 1rem;
   display: inline-flex;
   align-items: center;
 }
-.article-header a:hover, .article-header a:active, .article-header a:visited {
+.article-header a.link:hover, .article-header a.link:active, .article-header a.link:visited {
   color: #1e549f;
 }
-.article-header a::before {
+.article-header a.link .link-decoration {
+  color: #1e549f;
   font-size: 1.5rem;
-  content: "🡐";
   margin-right: 0.5rem;
 }
 
