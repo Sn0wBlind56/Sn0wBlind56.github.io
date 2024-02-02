@@ -9520,7 +9520,7 @@ pre .code {
 }
 
 .section {
-  padding-top: 6rem;
+  padding-top: 2rem;
 }
 .section .section-title {
   font-size: 2.5rem;
@@ -9868,6 +9868,26 @@ pre .code {
   font-size: 1.25rem;
   font-style: italic;
   font-weight: 600;
+}
+
+.article-header {
+  height: 4rem;
+  display: flex;
+  align-items: center;
+}
+.article-header a {
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+}
+.article-header a:hover, .article-header a:active, .article-header a:visited {
+  color: #1e549f;
+}
+.article-header a::before {
+  font-size: 1.5rem;
+  content: "🡐";
+  margin-right: 0.5rem;
 }
 
 .article-subtitle {

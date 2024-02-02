@@ -1,3 +1,26 @@
+.article-header {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+
+    a {
+        font-weight: 600;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+
+        &:hover, &:active, &:visited {
+            color: $primary;
+        }
+
+        &::before {
+            font-size: 1.5rem;
+            content: '\01F850';
+            margin-right: 0.5rem;
+        }
+    }
+}
+
 .article-subtitle {
     margin-top: 4rem;
 
